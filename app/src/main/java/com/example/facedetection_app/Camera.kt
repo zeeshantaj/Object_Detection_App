@@ -50,8 +50,8 @@ class Camera : AppCompatActivity() {
                 // Draw a rectangle around the object
                 val left = 100 // Example left coordinate
                 val top = 100 // Example top coordinate
-                val right = 300 // Example right coordinate
-                val bottom = 300 // Example bottom coordinate
+                val right = 100 // Example right coordinate
+                val bottom = 100 // Example bottom coordinate
                 canvas.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint)
 
                 // Update the TextView with the bounding box coordinates

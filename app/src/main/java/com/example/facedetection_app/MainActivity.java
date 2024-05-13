@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,6 +23,10 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
+import com.google.firebase.ml.vision.objects.FirebaseVisionObject;
+import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetector;
+import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions;
+
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
@@ -58,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 chosenImage.setImageBitmap(bitmap);
-                detectFace(bitmap);
+                //detectFace(bitmap);
+                detectObjects(bitmap);
                 // Now you have the bitmap, you can use it for face detection or display it in an ImageView
             } catch (IOException e) {
                 e.printStackTrace();
@@ -87,6 +93,36 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "You Need to give Storage permission to Open Gallery!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+    private void detectObjects(Bitmap bitmap) {
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+        FirebaseVisionObjectDetectorOptions options =
+                new FirebaseVisionObjectDetectorOptions.Builder()
+                        .setDetectorMode(FirebaseVisionObjectDetectorOptions.STREAM_MODE)
+                        .enableClassification()  // Optional: Enable object classification
+                        .build();
+
+        FirebaseVisionObjectDetector detector = FirebaseVision.getInstance()
+                .getOnDeviceObjectDetector(options);
+
+        detector.processImage(image)
+                .addOnSuccessListener(objects -> {
+                    // Task completed successfully
+                    // Process the detected objects
+                    for (FirebaseVisionObject object : objects) {
+                        Rect bounds = object.getBoundingBox();  // Get the bounding box of the object
+                        int id = object.getTrackingId();         // Get the tracking ID of the object (if available)
+                        int category = object.getClassificationCategory(); // Get the category of the detected object (if classification is enabled)
+
+                        Log.d("MyApp","image bound"+bounds);
+                        // Process the detected object
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.d("MyApp","Error "+e.getMessage());
+                    // Task failed with an exception
+                    // Handle the error
+                });
     }
 
     private void detectFace(Bitmap bitmap){
