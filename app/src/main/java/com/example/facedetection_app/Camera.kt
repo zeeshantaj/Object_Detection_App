@@ -37,6 +37,7 @@ class Camera : AppCompatActivity() {
             // Storing the Extras in bitmap variable as bitmap
             bitmap = result.data?.extras?.get("data") as Bitmap
 
+
             if (bitmap != null) {
                 // Convert the bitmap to a mutable bitmap
                 val mutableBitmap = bitmap!!.copy(Bitmap.Config.ARGB_8888, true)
