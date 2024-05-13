@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FaceDetection_App</string>
+    <string name="subHeading">Click Camera Button to Capture a Photo from Camera OR Click Gallery Button to Select an Photo from the Gallery.</string>
+    <string name="Heading">Welcome to \n Camera and Gallery \nApp</string>
+</resources>
