@@ -4,10 +4,14 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,10 +37,32 @@ class Camera : AppCompatActivity() {
             // Storing the Extras in bitmap variable as bitmap
             bitmap = result.data?.extras?.get("data") as Bitmap
 
-            // Changing the visibility of Views of our activity
-            binding.imagePreview.visibility = View.VISIBLE
-            binding.mainView.visibility = View.GONE
-            binding.inputImage.setImageBitmap(bitmap)
+            if (bitmap != null) {
+                // Convert the bitmap to a mutable bitmap
+                val mutableBitmap = bitmap!!.copy(Bitmap.Config.ARGB_8888, true)
+                val canvas = Canvas(mutableBitmap)
+                val paint = Paint().apply {
+                    color = Color.RED
+                    strokeWidth = 5f
+                    style = Paint.Style.STROKE
+                }
+                // Draw a rectangle around the object
+                val left = 100 // Example left coordinate
+                val top = 100 // Example top coordinate
+                val right = 300 // Example right coordinate
+                val bottom = 300 // Example bottom coordinate
+                canvas.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint)
+
+                // Update the TextView with the bounding box coordinates
+                val boundingBoxTextView = findViewById<TextView>(R.id.boundingBoxTextView)
+                val coordinatesText = "Left: $left, Top: $top, Right: $right, Bottom: $bottom"
+                boundingBoxTextView.text = coordinatesText
+
+                // Changing the visibility of Views of our activity
+                binding.imagePreview.visibility = View.VISIBLE
+                binding.mainView.visibility = View.GONE
+                binding.inputImage.setImageBitmap(mutableBitmap)
+            }
         }
     }
 
